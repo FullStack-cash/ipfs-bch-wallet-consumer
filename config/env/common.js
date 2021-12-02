@@ -82,7 +82,7 @@ module.exports = {
 
   preferredProvider: process.env.PREFERRED_PROVIDER
     ? process.env.PREFERRED_PROVIDER
-    : ''
+    : 'QmPXecxxXkRLy7MreH9DortC9xHMQbNtYudNa2PMcKiqXm'
   //  : 'QmdBGB8S6sEr19gaAxJYjhRbz5ZmMiH5a1JyyMmaxcRKnY'
   // : 'QmUTx6KqYKVZbKpKxR7vGDUgZFYVvVVyEWDeCYq4GwBCff'
   // Used for development
