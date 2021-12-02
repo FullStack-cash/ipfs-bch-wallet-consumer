@@ -1,3 +1,9 @@
+# free-bch.fullstack.cash
+
+This fork of [ipfs-bch-wallet-consumer](https://github.com/Permissionless-Software-Foundation/ipfs-bch-wallet-consumer) is used to power [free-bch.fullstack.cash](https://free-bch.fullstack.cash) REST API.
+
+This `master` branch is left unchanged, to pull in changes from the parent repository. The [production branch](https://github.com/Permissionless-Software-Foundation/ipfs-bch-wallet-consumer/tree/production) is what is deployed to production for [free-bch.fullstack.cash](https://free-bch.fullstack.cash).
+
 # ipfs-bch-wallet-consumer
 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
