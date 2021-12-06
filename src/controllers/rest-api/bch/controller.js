@@ -53,9 +53,9 @@ class BchRESTControllerLib {
 
   async postProvider (ctx) {
     try {
-      //const providerId = ctx.request.body.provider
+      // const providerId = ctx.request.body.provider
 
-      //await this.adapters.bch.selectProvider(providerId)
+      // await this.adapters.bch.selectProvider(providerId)
 
       const body = {
         success: true
