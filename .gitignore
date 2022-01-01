@@ -7,6 +7,7 @@
 #logs
 logs/*.json
 *.log
+*.log.*
 npm-debug.log*
 
 # Runtime data
@@ -65,5 +66,7 @@ system-user-*.json
 orbitdb
 ipfsdata
 .ipfsdata
+run-dev.sh
+data/
 
 !README.md
