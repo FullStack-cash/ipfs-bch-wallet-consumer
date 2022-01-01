@@ -53,7 +53,8 @@ RUN git clone https://github.com/FullStack-cash/ipfs-bch-wallet-consumer
 WORKDIR /home/safeuser/ipfs-bch-wallet-consumer
 
 # For development: switch to unstable branch
-RUN git checkout production --no-guess
+#RUN git checkout production --no-guess
+RUN git checkout origin/production
 
 # Install dependencies
 #RUN mkdir .ipfsdata
