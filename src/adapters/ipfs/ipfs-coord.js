@@ -51,7 +51,10 @@ class IpfsCoordAdapter {
 
     // Periodically poll services for available wallet service providers.
     this.pollBchServiceInterval = setInterval(this.pollForBchServices, 10000)
-    this.pollP2wdbServiceInterval = setInterval(this.pollForP2wdbServices, 11000)
+    this.pollP2wdbServiceInterval = setInterval(
+      this.pollForP2wdbServices,
+      11000
+    )
 
     // State object. TODO: Make this more robust.
     this.state = {
@@ -75,6 +78,7 @@ class IpfsCoordAdapter {
 
         circuitRelayInfo.ip4 = ip4
         circuitRelayInfo.tcpPort = this.config.ipfsTcpPort
+        circuitRelayInfo.wsPort = this.config.ipfsWsPort
 
         // Domain used by browser-based secure websocket connections.
         circuitRelayInfo.crDomain = this.config.crDomain
@@ -83,7 +87,7 @@ class IpfsCoordAdapter {
       }
     }
 
-    this.ipfsCoord = new this.IpfsCoord({
+    const ipfsCoordOptions = {
       ipfs: this.ipfs,
       type: 'node.js',
       // type: 'browser',
@@ -94,7 +98,14 @@ class IpfsCoordAdapter {
       apiInfo: this.config.apiInfo,
       announceJsonLd: this.config.announceJsonLd,
       debugLevel: this.config.debugLevel
-    })
+    }
+
+    // Production env uses external go-ipfs node.
+    if (this.config.isProduction) {
+      ipfsCoordOptions.nodeType = 'external'
+    }
+
+    this.ipfsCoord = new this.IpfsCoord(ipfsCoordOptions)
 
     // Wait for the ipfs-coord library to signal that it is ready.
     await this.ipfsCoord.start()
@@ -169,7 +180,7 @@ class IpfsCoordAdapter {
           // to the preferred provider when it's discovered.
           if (
             _this.config.preferredP2wdbProvider &&
-              thisPeer === _this.config.preferredP2wdbProvider
+            thisPeer === _this.config.preferredP2wdbProvider
           ) {
             _this.state.selectedP2wdbProvider = thisPeer
           }
@@ -187,8 +198,15 @@ class IpfsCoordAdapter {
         }
       }
     } catch (err) {
+      // catch and handle known failure mode.
+      if (
+        err.message.includes("Cannot read property 'peerList' of undefined")
+      ) {
+        return
+      }
+
       console.error('Error in pollForP2wdbServices()')
-      throw err
+      // Do not throw error. This is a top-level function.
     }
   }
 
@@ -259,6 +277,13 @@ class IpfsCoordAdapter {
         }
       }
     } catch (err) {
+      // catch and handle known failure mode.
+      if (
+        err.message.includes("Cannot read property 'peerList' of undefined")
+      ) {
+        return
+      }
+
       console.error('Error in pollForBchServices(): ', err)
       // Do not throw error. This is a top-level function.
     }
