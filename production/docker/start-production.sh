@@ -23,13 +23,13 @@ export DEBUG_LEVEL=2
 
 
 # Production database connection string.
-export DBURL=mongodb://172.17.0.1:5555/ipfs-service-prod
+export DBURL=mongodb://172.17.0.1:5555/ipfs-bch-consumer-dev
 
 # Configure REST API port
 export PORT=5010
 
 # Production settings using external go-ipfs node.
-export SVC_ENV=production
+export CONSUMER_ENV=production
 export IPFS_HOST=172.17.0.1
 export IPFS_API_PORT=5001
 export IPFS_TCP_PORT=4001
