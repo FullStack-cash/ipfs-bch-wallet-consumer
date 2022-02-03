@@ -198,8 +198,9 @@ class BchAdapter {
 
       // Wait for data to come back from the wallet service.
       const data = await this.waitForRPCResponse(rpcId)
+      // console.log(`data: ${JSON.stringify(data, null, 2)}`)
 
-      return data[0]
+      return data
     } catch (err) {
       // console.log('createUser() error: ', err)
       wlogger.error('Error in use-cases/bch.js/getUtxos()')
@@ -249,8 +250,11 @@ class BchAdapter {
     }
   }
 
-  async getTransactions (address) {
+  // Get the transaction history for an address.
+  async getTransactions (address, sortOrder = 'DESCENDING', page = 0) {
     try {
+      console.log('Executing getTransaction() bch adapter')
+
       // Throw an error if this IPFS node has not yet made a connection to a
       // wallet service provider.
       const selectedProvider =
@@ -260,8 +264,10 @@ class BchAdapter {
       }
 
       const rpcData = {
-        endpoint: 'transactions',
-        addresses: [address]
+        endpoint: 'txHistory',
+        address: address,
+        sortOrder,
+        page
       }
 
       // Generate a UUID for the call.
@@ -270,7 +276,7 @@ class BchAdapter {
       // Generate a JSON RPC command.
       const cmd = this.jsonrpc.request(rpcId, 'bch', rpcData)
       const cmdStr = JSON.stringify(cmd)
-      // console.log('cmdStr: ', cmdStr)
+      console.log('cmdStr: ', cmdStr)
 
       // Send the RPC command to selected wallet service.
       const thisNode = this.ipfs.ipfsCoordAdapter.ipfsCoord.thisNode
@@ -291,8 +297,13 @@ class BchAdapter {
     }
   }
 
-  async getTransaction (txid) {
+  // Get details on an array of TXIDs.
+  async getTransaction (txids) {
     try {
+      console.log(
+        `Getting txData on these txids: ${JSON.stringify(txids, null, 2)}`
+      )
+
       // Throw an error if this IPFS node has not yet made a connection to a
       // wallet service provider.
       const selectedProvider =
@@ -302,8 +313,8 @@ class BchAdapter {
       }
 
       const rpcData = {
-        endpoint: 'transaction',
-        txid
+        endpoint: 'txData',
+        txids
       }
 
       // Generate a UUID for the call.
@@ -312,7 +323,7 @@ class BchAdapter {
       // Generate a JSON RPC command.
       const cmd = this.jsonrpc.request(rpcId, 'bch', rpcData)
       const cmdStr = JSON.stringify(cmd)
-      // console.log('cmdStr: ', cmdStr)
+      console.log('cmdStr: ', cmdStr)
 
       // Send the RPC command to selected wallet service.
       const thisNode = this.ipfs.ipfsCoordAdapter.ipfsCoord.thisNode
@@ -324,11 +335,12 @@ class BchAdapter {
 
       // Wait for data to come back from the wallet service.
       const data = await this.waitForRPCResponse(rpcId)
+      console.log(`data: ${JSON.stringify(data, null, 2)}`)
 
       return data
     } catch (err) {
       // console.log('createUser() error: ', err)
-      wlogger.error('Error in adapters/bch.js/transaction()')
+      wlogger.error('Error in adapters/bch.js/getTransaction()')
       throw err
     }
   }
@@ -400,6 +412,9 @@ class BchAdapter {
             dataFound = true
             // console.log('data was found in the queue')
 
+            // console.log(
+            //   `rawData.payload: ${JSON.stringify(rawData.payload, null, 2)}`
+            // )
             data = rawData.payload.result.value
 
             // Remove the data from the queue

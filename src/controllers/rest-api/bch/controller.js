@@ -271,10 +271,17 @@ class BchRESTControllerLib {
 
   /**
    *
-   * @api {post} /bch/transactions Transactions
-   * @apiName Transactions
+   * @api {post} /bch/txHistory TX History
+   * @apiName TX History
    * @apiGroup REST BCH
    * @apiDescription This endpoint wraps the bchjs.Electrumx.transactions([]) function.
+   * It returns the transaction history for an address. This list of TXIDs is
+   * sorted and paginated.
+   *
+   * There are three possible inputs:
+   * - address: (required) the address to query for a transaction history
+   * - sortOrder: (optional) will sort results in 'DECENDING' (default) or 'ASCENDING' order.
+   * - page: (optional) will return a 'page' of 100 results. Default is 0
    *
    *  Given the 'addresses' property returns an array of objects
    *  with the following properties
@@ -289,7 +296,7 @@ class BchRESTControllerLib {
    *  Note: For a single address pass the 'addresses' of string type
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X POST -d '{ "addresses": ["bitcoincash:qrl2nlsaayk6ekxn80pq0ks32dya8xfclyktem2mqj"] }' localhost:5001/bch/transactions
+   * curl -H "Content-Type: application/json" -X POST -d '{ "address": "bitcoincash:qrl2nlsaayk6ekxn80pq0ks32dya8xfclyktem2mqj" }' localhost:5001/bch/txHistory
    *
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
@@ -317,11 +324,20 @@ class BchRESTControllerLib {
    *       "error": "Unprocessable Entity"
    *     }
    */
-  async transactions (ctx) {
+  async txHistory (ctx) {
     try {
-      const addr = ctx.request.body.address
+      // console.log('transactions REST API handler called.')
+      // console.log(`body: ${JSON.stringify(ctx.request.body, null, 2)}`)
 
-      const data = await this.adapters.bch.getTransactions(addr)
+      const addr = ctx.request.body.address
+      const sortOrder = ctx.request.body.sortOrder
+      const page = ctx.request.body.page
+
+      const data = await this.adapters.bch.getTransactions(
+        addr,
+        sortOrder,
+        page
+      )
       // console.log(`data: ${JSON.stringify(data, null, 2)}`)
 
       ctx.body = data
@@ -331,11 +347,14 @@ class BchRESTControllerLib {
   }
 
   /**
-   * @api {post} /bch/transaction Transaction
-   * @apiName Transaction
+   * @api {post} /bch/txData TX Data
+   * @apiName txData
    * @apiGroup REST BCH
-   * @apiDescription Get data about a specific transaction.
-   * Given a transaction id this endpoint will return an object
+   * @apiDescription Get expanded transaction data for an array of transaction
+   * IDs. Each call is limited to 20 TXIDs or less.
+   *
+   * Get data about specific transactions.
+   * Given an array of transaction IDs this endpoint will return an array of objects
    * with the following properties
    *
    * - txid: "" - Transaction ID
@@ -353,11 +372,11 @@ class BchRESTControllerLib {
    * - isValidSLPTx: - Determines if the transaction was under SLP
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X POST -d '{ "txid": "01517ff1587fa5ffe6f5eb91c99cf3f2d22330cd7ee847e928ce90ca95bf781b" }' localhost:5001/bch/transaction
+   * curl -H "Content-Type: application/json" -X POST -d '{ "txids": ["01517ff1587fa5ffe6f5eb91c99cf3f2d22330cd7ee847e928ce90ca95bf781b"] }' localhost:5001/bch/transaction
    *
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
-   * {
+   * [{
    *    "txid":"01517ff1587fa5ffe6f5eb91c99cf3f2d22330cd7ee847e928ce90ca95bf781b",
    *    "hash":"01517ff1587fa5ffe6f5eb91c99cf3f2d22330cd7ee847e928ce90ca95bf781b",
    *    "version":1,
@@ -406,7 +425,7 @@ class BchRESTControllerLib {
    *    "time":1568338904,
    *    "blocktime":1568338904,
    *    "isValidSLPTx":false
-   * }
+   * }]
    *
    * @apiError UnprocessableEntity Missing required parameters
    *
@@ -417,11 +436,19 @@ class BchRESTControllerLib {
    *       "error": "Unprocessable Entity"
    *     }
    */
-  async transaction (ctx) {
+  async txData (ctx) {
     try {
-      const txid = ctx.request.body.txid
+      console.log(
+        `txData called with this body data: ${JSON.stringify(
+          ctx.request.body,
+          null,
+          2
+        )}`
+      )
 
-      const data = await this.adapters.bch.getTransaction(txid)
+      const txids = ctx.request.body.txids
+
+      const data = await this.adapters.bch.getTransaction(txids)
       // console.log(`utxos: ${JSON.stringify(utxos, null, 2)}`)
 
       ctx.body = data
