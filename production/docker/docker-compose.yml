@@ -3,19 +3,19 @@
 version: '3.9'
 
 services:
-  mongo-bch-consumer-wa:
+  mongo-bch-consumer-or:
     image: mongo
-    container_name: mongo-bch-consumer-wa
+    container_name: mongo-bch-consumer-or
     ports:
-      - '5556:27017' # <host port>:<container port>
+      - '5557:27017' # <host port>:<container port>
     volumes:
       - ../data/database:/data/db
     command: mongod --logpath=/dev/null # -- quiet
     restart: always
 
-  ipfs-bch-consumer-wa:
+  ipfs-bch-consumer-or:
     image: ipfs/go-ipfs:v0.11.0
-    container_name: ipfs-bch-consumer-wa
+    container_name: ipfs-bch-consumer-or
     environment:
       MY_ENV_VAR: 'placeholder'
     logging:
@@ -25,8 +25,8 @@ services:
         max-file: '10'
     mem_limit: 2000mb
     ports:
-      - 4002:4002
-      - 172.17.0.1:5002:5002
+      - 4003:4003
+      - 172.17.0.1:5003:5003
     volumes:
       - ../data/go-ipfs/data:/data/ipfs
       - ../data/go-ipfs/export:/export
@@ -41,9 +41,9 @@ services:
       ]
     restart: always
 
-  bch-consumer-wa:
+  bch-consumer-or:
     build: .
-    container_name: bch-consumer-wa
+    container_name: bch-consumer-or
     logging:
       driver: 'json-file'
       options:
@@ -51,10 +51,10 @@ services:
         max-file: '10'
     mem_limit: 1500mb
     links:
-      - mongo-bch-consumer-wa
-      - ipfs-bch-consumer-wa
+      - mongo-bch-consumer-or
+      - ipfs-bch-consumer-or
     ports:
-      - '5011:5011' # <host port>:<container port>
+      - '5012:5012' # <host port>:<container port>
     volumes:
       - ../data/ipfsdata:/home/safeuser/ipfs-service-provider/.ipfsdata
     restart: always
