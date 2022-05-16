@@ -68,5 +68,6 @@ ipfsdata
 .ipfsdata
 run-dev.sh
 data/
+bkup.sh
 
 !README.md
